@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './question.dart';
+import './answer.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,36 +15,49 @@ class MyApp extends StatefulWidget {
   }
 }
 
-/**
- * _ means private class
- */
-
 class _MyAppState extends State<MyApp> {
-  var _questionIndex = 0;
+  var _questionIndex = 0; //Note :  _ means private class
 
+  /**
+  * Questions = Array()
+  * Array contains questions and and answers
+  */
+  static const questions = [
+    {
+      'questionText': 'What\'s your favorite colour ?',
+      'answers': ['Black', 'Red', 'Yellow', 'Blue'],
+    },
+    {
+      'questionText': 'What\'s your favorite animal ?',
+      'answers': ['Lion', 'Zebra', 'Gorilla', 'Frog'],
+    },
+    {
+      'questionText': 'What\'s your favorite sport ?',
+      'answers': ['Basket', 'Soccer', 'Golf', 'Tennis'],
+    }
+  ];
+
+  /**
+  *  _answerQuestion()
+  * Increment question +1
+  * return string
+  */
   void _answerQuestion() {
-    /**
-     * Update the widget by Calling the build method
-     */
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
 
     print(_questionIndex);
+    if (_questionIndex < questions.length) {
+      print('You have no more questions !');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     /**
-     * Questions
-     */
-    var questions = [
-      'What\'s your favorite colour ?',
-      'What\'s your favorite animal ?'
-    ];
-
-    /**
-     * Answers
+     * MaterialApp
+     * Display Answers
      */
     return MaterialApp(
       home: Scaffold(
@@ -53,22 +67,15 @@ class _MyAppState extends State<MyApp> {
         body: Column(
           children: [
             Question(
-              questions[_questionIndex],
+              questions[_questionIndex]['questionText'],
             ),
-            RaisedButton(
-              child: Text(
-               'Answer 1'
-              ),
-              onPressed: _answerQuestion,
-            ),
-            RaisedButton(
-              child: Text('Answer 2'),
-              onPressed: _answerQuestion,
-            ),
-            RaisedButton(
-              child: Text('Answer 3'),
-              onPressed: _answerQuestion,
-            ),
+            /**
+             * Select the right answer for question
+             */
+            ...(questions[_questionIndex]['answers'] as List<String>)
+                .map((answer) {
+              return Answer(_answerQuestion, answer);
+            }).toList()
           ],
         ),
       ),
