@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,39 +16,64 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var _questionIndex = 0; //Note :  _ means private class
-
   /**
   * Questions = Array()
   * Array contains questions and and answers
   */
-  static const questions = [
+  static const _questions = [
     {
       'questionText': 'What\'s your favorite colour ?',
-      'answers': ['Black', 'Red', 'Yellow', 'Blue'],
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Red', 'score': 6},
+        {'text': 'Yellow', 'score': 5},
+        {'text': 'Blue', 'score': 4}
+      ],
     },
     {
       'questionText': 'What\'s your favorite animal ?',
-      'answers': ['Lion', 'Zebra', 'Gorilla', 'Frog'],
+      'answers': [
+        {'text': 'Lion', 'score': 10},
+        {'text': 'Zebra', 'score': 6},
+        {'text': 'Frog', 'score': 5},
+        {'text': 'Gorilla', 'score': 4}
+      ],
     },
     {
       'questionText': 'What\'s your favorite sport ?',
-      'answers': ['Basket', 'Soccer', 'Golf', 'Tennis'],
+      'answers': [
+        {'text': 'Basket', 'score': 10},
+        {'text': 'Basket', 'score': 6},
+        {'text': 'Golf', 'score': 5},
+        {'text': 'Tennis', 'score': 4}
+      ],
     }
   ];
+
+  var _questionIndex = 0; //Note :  _ means private class
+  var _totalScore = 0;
+
+void _resetQuiz(){
+  setState(() {
+    _questionIndex = 0;
+    _totalScore = 0;   
+  });
+}
 
   /**
   *  _answerQuestion()
   * Increment question +1
   * return string
   */
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
+
+    _totalScore +=  score;
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
 
     print(_questionIndex);
-    if (_questionIndex < questions.length) {
+    if (_questionIndex < _questions.length) {
       print('You have no more questions !');
     }
   }
@@ -64,20 +89,13 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My First App'),
         ),
-        body: Column(
-          children: [
-            Question(
-              questions[_questionIndex]['questionText'],
-            ),
-            /**
-             * Select the right answer for question
-             */
-            ...(questions[_questionIndex]['answers'] as List<String>)
-                .map((answer) {
-              return Answer(_answerQuestion, answer);
-            }).toList()
-          ],
-        ),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questionIndex: _questionIndex,
+                questions: _questions,
+              )
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
